@@ -2,39 +2,26 @@ package repository
 
 import (
 	"CoinTransfer/internal/model"
-	"database/sql"
+	"CoinTransfer/pkg/database"
+	"log"
 )
 
-type UserRepository struct {
-	db *sql.DB
-}
-
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{db: db}
-}
-
-func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
+// Получение пользователя по имени
+func GetUserByUsername(username string) (*model.User, error) {
 	var user model.User
-	err := r.db.QueryRow("SELECT id, username, password, coins FROM users WHERE username = ?", username).Scan(&user.ID, &user.Username, &user.Password, &user.Coins)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, err
+	result := database.DB.Where("username = ?", username).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	return &user, nil
 }
 
-func (r *UserRepository) FindByID(userID int) (*model.User, error) {
-	var user model.User
-	err := r.db.QueryRow("SELECT id, username, password, coins FROM users WHERE id = ?", userID).Scan(&user.ID, &user.Username, &user.Password, &user.Coins)
-	if err != nil {
-		return nil, err
+func CreateUser(user *model.User) error {
+	result := database.DB.Create(&user)
+	if result.Error != nil {
+		log.Printf("Error creating user: %v", result.Error) // Логирование ошибки
+		return result.Error
 	}
-	return &user, nil
-}
-
-func (r *UserRepository) Create(user *model.User) error {
-	_, err := r.db.Exec("INSERT INTO users (username, password, coins) VALUES (?, ?, ?)", user.Username, user.Password, user.Coins)
-	return err
+	log.Printf("User %s created successfully", user.Username) // Логирование успешного создания
+	return nil
 }

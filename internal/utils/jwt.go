@@ -1,21 +1,29 @@
 package utils
 
 import (
-	"errors"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtKey = []byte("your_secret_key")
+var secretKey = []byte("yourSecretKey")
 
-func GenerateJWT(userID int) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	})
+type Claims struct {
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
 
-	tokenString, err := token.SignedString(jwtKey)
+// Генерация JWT
+func GenerateJWT(username string) (string, error) {
+	claims := Claims{
+		Username: username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", err
 	}
@@ -23,19 +31,19 @@ func GenerateJWT(userID int) (string, error) {
 	return tokenString, nil
 }
 
-func ValidateJWT(tokenString string) (int, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+// Верификация JWT
+func VerifyJWT(tokenString string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
 	})
-
-	if err != nil {
-		return 0, err
+	if err != nil || !token.Valid {
+		return nil, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID := int(claims["user_id"].(float64))
-		return userID, nil
+	claims, ok := token.Claims.(*Claims)
+	if !ok {
+		return nil, err
 	}
 
-	return 0, errors.New("invalid token")
+	return claims, nil
 }

@@ -1,41 +1,62 @@
 package handler
 
 import (
+	"CoinTransfer/internal/model"
+	"CoinTransfer/internal/repository"
+	"CoinTransfer/internal/utils"
 	"encoding/json"
 	"net/http"
 
-	"CoinTransfer/internal/model"
-	"CoinTransfer/internal/service"
-	"CoinTransfer/internal/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
-type AuthHandler struct {
-	authService *service.AuthService
-}
-
-func NewAuthHandler(authService *service.AuthService) *AuthHandler {
-	return &AuthHandler{authService: authService}
-}
-
-func (h *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
-	var req model.AuthRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
-
-	user, err := h.authService.Authenticate(req.Username, req.Password)
+// Обработчик аутентификации и регистрации пользователя
+func AuthHandler(w http.ResponseWriter, r *http.Request) {
+	var user model.User
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, "Authentication failed", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	token, err := utils.GenerateJWT(user.ID)
+	// Ищем пользователя в базе
+	existingUser, err := repository.GetUserByUsername(user.Username)
 	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		// Если пользователь не найден, создаем нового
+		existingUser = &model.User{
+			Username: user.Username,
+		}
+
+		// Хешируем пароль
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			return
+		}
+		existingUser.Password = string(hashedPassword)
+
+		// Сохраняем нового пользователя в базе
+		err = repository.CreateUser(existingUser)
+		if err != nil {
+			http.Error(w, "Error creating user", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// Проверка пароля
+	err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password))
+	if err != nil {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
 
-	response := model.AuthResponse{Token: token}
-	json.NewEncoder(w).Encode(response)
+	// Генерация JWT
+	token, err := utils.GenerateJWT(existingUser.Username)
+	if err != nil {
+		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		return
+	}
+
+	// Отправка токена
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }

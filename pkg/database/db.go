@@ -1,21 +1,33 @@
 package database
 
 import (
-	"database/sql"
-	"fmt"
+	"CoinTransfer/internal/model"
+	"log"
 
-	_ "github.com/lib/pq" // Импортируйте драйвер для вашей СУБД
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func Connect(databaseURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", databaseURL)
-	if err != nil {
-		return nil, fmt.Errorf("could not open database: %v", err)
-	}
+var DB *gorm.DB
 
-	if err = db.Ping(); err != nil {
-		return nil, fmt.Errorf("could not ping database: %v", err)
-	}
+// Функция для инициализации подключения к базе данных
+func InitDB() {
+	if DB == nil {
+		dsn := "user=twitchis password=yourpassword dbname=twitchis host=localhost port=5432 sslmode=disable"
+		var err error
+		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			log.Fatal("Failed to connect to database:", err)
+		} else {
+			log.Println("Successfully connected to the database!") // Логирование успешного подключения
+		}
 
-	return db, nil
+		// Миграции
+		err = DB.AutoMigrate(&model.User{})
+		if err != nil {
+			log.Fatal("Failed to migrate database:", err)
+		} else {
+			log.Println("Database migration successful!") // Логирование успешной миграции
+		}
+	}
 }
