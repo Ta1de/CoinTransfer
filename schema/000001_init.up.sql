@@ -5,3 +5,11 @@ CREATE TABLE users
     password_hash varchar(256) not null,
     coins int default 0
 )
+
+CREATE TABLE coinHistory (
+    id serial primary key,
+    from_user int not null,
+    to_user int not null,
+    amount int not null,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

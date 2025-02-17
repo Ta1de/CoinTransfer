@@ -20,7 +20,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	api := router.Group("/api")
 	{
 		api.POST("/auth", h.auth)
-		api.POST("/sendCoin", h.sendCoin)
+		api.POST("/sendCoin", h.SendCoin)
 		api.GET("/info", h.getInfo)
 		api.GET("/buy/{item}", h.buyItem)
 	}

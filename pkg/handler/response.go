@@ -9,5 +9,8 @@ import (
 
 func newErrorResponse(c *gin.Context, statusCode int, message string) {
 	logrus.Error(message)
-	c.AbortWithStatusJSON(statusCode, model.Error{message})
+	c.AbortWithStatusJSON(statusCode, model.Error{
+		StatusCode: statusCode,
+		Message:    message,
+	})
 }

@@ -1,5 +1,6 @@
 package model
 
 type Error struct {
-	Message string `json:"message"`
+	StatusCode int    `json:"status_code"`
+	Message    string `json:"message"`
 }
