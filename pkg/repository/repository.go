@@ -13,19 +13,25 @@ type Authorization interface {
 
 type Transfer interface {
 	GetUserIDByUsername(username string) (int, error)
-	GetUserBalance(userID int) (float64, error)
-	UpdateBalances(senderID, receiverID int, amount float64) error
-	SaveTransfer(fromUserId int, toUser string, amount int) error
+	GetUserBalance(userID int) (int, error)
+	UpdateBalances(senderID, receiverID, amount int) error
+	SaveTransfer(fromUserId, toUser, amount int) error
+}
+
+type Info interface {
+	GetInventory(UserId int) (model.InventoryItems, error)
 }
 
 type Repository struct {
 	Authorization
 	Transfer
+	Info
 }
 
 func NewRepositore(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		Transfer:      NewTransferPostgres(db),
+		Info:          NewInfoPostgres(db),
 	}
 }

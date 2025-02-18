@@ -2,6 +2,7 @@ package service
 
 import (
 	"CoinTransfer/pkg/repository"
+	"fmt"
 )
 
 type TransferService struct {
@@ -14,8 +15,26 @@ func NewTransferService(repo repository.Transfer) *TransferService {
 
 func (s *TransferService) SendCoins(fromUserId int, toUser string, amount int) error {
 
-	// Сохраняем информацию о транзакции в базу данных
-	err := s.repo.SaveTransfer(fromUserId, toUser, amount)
+	toUserId, err := s.repo.GetUserIDByUsername(toUser)
+	if err != nil {
+		return err
+	}
+
+	balance, err := s.repo.GetUserBalance(fromUserId)
+	if err != nil {
+		return err
+	}
+
+	if balance < amount {
+		return fmt.Errorf("not enough balance")
+	}
+
+	err = s.repo.UpdateBalances(fromUserId, toUserId, amount)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.SaveTransfer(fromUserId, toUserId, amount)
 	if err != nil {
 		return err
 	}

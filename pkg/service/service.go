@@ -14,14 +14,20 @@ type Transfer interface {
 	SendCoins(fromUserId int, toUser string, amount int) error
 }
 
+type Info interface {
+	GetInfo(UserId int) error
+}
+
 type Service struct {
 	Authorization
 	Transfer
+	Info
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		Transfer:      NewTransferService(repos.Transfer),
+		Info:          NewInfoService(repos.Info),
 	}
 }

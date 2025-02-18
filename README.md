@@ -9,3 +9,6 @@ migrate create -ext sql -dir ./schema -seq init
 docker pull postgres
 docker run --name=cointransfer-db -e POSTGRES_PASSWORD='qwerty' -p 5432:5432 -d --rm postgres
 psql -U postgres
+UPDATE users SET coins = 1000 WHERE username = 'pers1';
+brew install jq
+brew install golang-migrate
