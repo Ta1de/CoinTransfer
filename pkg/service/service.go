@@ -15,7 +15,7 @@ type Transfer interface {
 }
 
 type Info interface {
-	GetInfo(UserId int) error
+	GetInfo(UserId int) (model.Info, error)
 }
 
 type Service struct {

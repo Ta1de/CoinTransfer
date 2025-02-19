@@ -20,6 +20,10 @@ type Transfer interface {
 
 type Info interface {
 	GetInventory(UserId int) (model.InventoryItems, error)
+	TransferHistory(UserId int) (model.History, error)
+	getReceivedTransactions(UserId int) ([]model.ReceivedTransaction, error)
+	getSentTransactions(UserId int) ([]model.SentTransaction, error)
+	GetCoins(userID int) (int, error)
 }
 
 type Repository struct {

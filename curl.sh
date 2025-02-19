@@ -24,22 +24,36 @@ curl -X POST http://localhost:8080/api/sendCoin \
      -H "Content-Type: application/json" \
      -d '{"ToUser": "pers2", "Amount": 100}'
 
+echo \
+
 curl -X POST http://localhost:8080/api/sendCoin \
      -H "Authorization: Bearer $token2" \
      -H "Content-Type: application/json" \
      -d '{"ToUser": "pers1", "Amount": 100}'
+
+echo \
 
 curl -X POST http://localhost:8080/api/sendCoin \
      -H "Authorization: Bearer $token1" \
      -H "Content-Type: application/json" \
      -d '{"ToUser": "pers2", "Amount": 1000}'
 
+echo \
+
 curl -X POST http://localhost:8080/api/sendCoin \
      -H "Authorization: Bearer $token1" \
      -H "Content-Type: application/json" \
      -d '{"ToUser": "pers3", "Amount": 1000}'
 
+echo \
+
 curl -X POST http://localhost:8080/api/sendCoin \
      -H "Authorization: Bearer $token1" \
      -H "Content-Type: application/json" \
      -d '{"ToUser": "pers4", "Amount": 1000}'
+
+echo \
+
+curl -X GET http://localhost:8080/api/info \
+     -H "Authorization: Bearer $token1" \
+     -H "Content-Type: application/json"
