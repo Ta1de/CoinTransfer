@@ -22,3 +22,22 @@ CREATE TABLE inventory
     item varchar(256),
     quantity int
 );
+
+CREATE TABLE items
+(
+    id serial primary key,
+    item varchar(256),
+    price int
+);
+
+INSERT INTO items (item, price) VALUES
+    ('t-shirt', 80),
+    ('cup', 20),
+    ('book', 50),
+    ('pen', 10),
+    ('powerbank', 200),
+    ('hoody', 300),
+    ('umbrella', 200),
+    ('socks', 10),
+    ('wallet', 50),
+    ('pink-hoody', 500);

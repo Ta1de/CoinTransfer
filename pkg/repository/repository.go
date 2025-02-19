@@ -26,10 +26,15 @@ type Info interface {
 	GetCoins(userID int) (int, error)
 }
 
+type BuyItem interface {
+	GetItem(ItemName string) (model.Item, error)
+}
+
 type Repository struct {
 	Authorization
 	Transfer
 	Info
+	BuyItem
 }
 
 func NewRepositore(db *sqlx.DB) *Repository {
@@ -37,5 +42,6 @@ func NewRepositore(db *sqlx.DB) *Repository {
 		Authorization: NewAuthPostgres(db),
 		Transfer:      NewTransferPostgres(db),
 		Info:          NewInfoPostgres(db),
+		BuyItem:       NewBuyItemPostgres(db),
 	}
 }

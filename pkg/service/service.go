@@ -18,10 +18,15 @@ type Info interface {
 	GetInfo(UserId int) (model.Info, error)
 }
 
+type BuyItem interface {
+	BuyItem() (string, error)
+}
+
 type Service struct {
 	Authorization
 	Transfer
 	Info
+	BuyItem
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -29,5 +34,6 @@ func NewService(repos *repository.Repository) *Service {
 		Authorization: NewAuthService(repos.Authorization),
 		Transfer:      NewTransferService(repos.Transfer),
 		Info:          NewInfoService(repos.Info),
+		BuyItem:       NewBuyItemService(repos.BuyItem),
 	}
 }
