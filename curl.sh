@@ -17,8 +17,6 @@ token4=$(curl -X POST http://localhost:8080/api/auth \
   -H 'Content-Type: application/json' \
   -d '{"username": "pers4", "password": "password"}' | jq -r '.token')
 
-docker exec -it cointransfer-db psql -U postgres -c "UPDATE users SET coins = 5000 WHERE username = 'pers1';"
-
 curl -X POST http://localhost:8080/api/sendCoin \
      -H "Authorization: Bearer $token1" \
      -H "Content-Type: application/json" \
@@ -33,24 +31,21 @@ curl -X POST http://localhost:8080/api/sendCoin \
 
 echo \
 
-curl -X POST http://localhost:8080/api/sendCoin \
+curl -X GET http://localhost:8080/api/buy/cup \
      -H "Authorization: Bearer $token1" \
-     -H "Content-Type: application/json" \
-     -d '{"ToUser": "pers2", "Amount": 1000}'
+     -H "Content-Type: application/json"
 
 echo \
 
-curl -X POST http://localhost:8080/api/sendCoin \
+curl -X GET http://localhost:8080/api/buy/cup \
      -H "Authorization: Bearer $token1" \
-     -H "Content-Type: application/json" \
-     -d '{"ToUser": "pers3", "Amount": 1000}'
+     -H "Content-Type: application/json"
 
 echo \
 
-curl -X POST http://localhost:8080/api/sendCoin \
+curl -X GET http://localhost:8080/api/buy/book \
      -H "Authorization: Bearer $token1" \
-     -H "Content-Type: application/json" \
-     -d '{"ToUser": "pers4", "Amount": 1000}'
+     -H "Content-Type: application/json"
 
 echo \
 

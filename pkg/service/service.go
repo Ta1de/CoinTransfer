@@ -19,7 +19,7 @@ type Info interface {
 }
 
 type BuyItem interface {
-	BuyItem() (string, error)
+	BuyItemByName(ItemName string, UserId int) (model.Item, error)
 }
 
 type Service struct {

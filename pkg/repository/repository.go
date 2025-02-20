@@ -28,6 +28,9 @@ type Info interface {
 
 type BuyItem interface {
 	GetItem(ItemName string) (model.Item, error)
+	GetBalance(userID int) (int, error)
+	AddToInventory(userID int, itemName string) error
+	UpdateBalance(senderID, amount int) error
 }
 
 type Repository struct {

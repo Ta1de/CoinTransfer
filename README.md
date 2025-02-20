@@ -12,3 +12,4 @@ psql -U postgres
 UPDATE users SET coins = 1000 WHERE username = 'pers1';
 brew install jq
 brew install golang-migrate
+docker exec -it cointransfer-db psql -U postgres

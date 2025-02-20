@@ -3,7 +3,7 @@ CREATE TABLE users
     id serial not null unique,
     username varchar(256) not null unique,
     password_hash varchar(256) not null,
-    coins int default 0
+    coins int default 1000
 );
 
 CREATE TABLE coinHistory
@@ -19,8 +19,9 @@ CREATE TABLE inventory
 (
     id serial primary key,
     user_id int not null,
-    item varchar(256),
-    quantity int
+    item varchar(256) not null,
+    quantity int not null,
+    UNIQUE (user_id, item)
 );
 
 CREATE TABLE items
