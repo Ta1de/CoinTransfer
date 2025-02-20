@@ -16,7 +16,7 @@ func NewHandler(services *services.Service) *Handler {
 	return &Handler{services: services}
 }
 
-func (h *Handler) InitRoutes(authService *services.AuthService) *gin.Engine {
+func (h *Handler) InitRoutes(authService services.Authorization) *gin.Engine {
 	router := gin.New()
 
 	api := router.Group("/api")

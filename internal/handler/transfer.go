@@ -1,4 +1,3 @@
-// handler/send_coin.go
 package handler
 
 import (

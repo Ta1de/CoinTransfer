@@ -42,7 +42,7 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	srv := new(cointransfer.Server)
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes(&services.AuthService{})); err != nil {
+	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes(services.Authorization)); err != nil {
 		logrus.Fatalf("error occured while running server: %s", err.Error())
 	}
 }
