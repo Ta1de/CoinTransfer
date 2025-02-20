@@ -1,4 +1,4 @@
-package model
+package models
 
 type SendCoinRequest struct {
 	ToUser string `json:"ToUser" binding:"required"`

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"CoinTransfer/pkg/model"
+	"CoinTransfer/internal/models"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -15,8 +15,8 @@ func NewBuyItemPostgres(db *sqlx.DB) *BuyItemPostgres {
 	return &BuyItemPostgres{db: db}
 }
 
-func (r *BuyItemPostgres) GetItem(ItemName string) (model.Item, error) {
-	var item model.Item
+func (r *BuyItemPostgres) GetItem(ItemName string) (models.Item, error) {
+	var item models.Item
 	err := r.db.Get(&item, "SELECT * FROM items WHERE item = $1", ItemName)
 	if err != nil {
 		return item, err

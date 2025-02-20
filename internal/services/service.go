@@ -1,12 +1,12 @@
-package service
+package services
 
 import (
-	"CoinTransfer/pkg/model"
-	"CoinTransfer/pkg/repository"
+	"CoinTransfer/internal/models"
+	"CoinTransfer/internal/repository"
 )
 
 type Authorization interface {
-	CreateUser(user model.User) (string, error)
+	CreateUser(user models.User) (string, error)
 	CreateToken(username, password string) (string, error)
 }
 
@@ -15,11 +15,11 @@ type Transfer interface {
 }
 
 type Info interface {
-	GetInfo(UserId int) (model.Info, error)
+	GetInfo(UserId int) (models.Info, error)
 }
 
 type BuyItem interface {
-	BuyItemByName(ItemName string, UserId int) (model.Item, error)
+	BuyItemByName(ItemName string, UserId int) (models.Item, error)
 }
 
 type Service struct {

@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"CoinTransfer/pkg/model"
+	"CoinTransfer/internal/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) auth(c *gin.Context) {
-	var input model.User
+	var input models.User
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())

@@ -1,8 +1,8 @@
-package service
+package services
 
 import (
-	"CoinTransfer/pkg/model"
-	"CoinTransfer/pkg/repository"
+	"CoinTransfer/internal/models"
+	"CoinTransfer/internal/repository"
 	"fmt"
 )
 
@@ -14,8 +14,8 @@ func NewBuyItemService(repo repository.BuyItem) *BuyItemService {
 	return &BuyItemService{repo: repo}
 }
 
-func (s *BuyItemService) BuyItemByName(ItemName string, UserId int) (model.Item, error) {
-	var item model.Item
+func (s *BuyItemService) BuyItemByName(ItemName string, UserId int) (models.Item, error) {
+	var item models.Item
 	item, err := s.repo.GetItem(ItemName)
 	if err != nil {
 		return item, err

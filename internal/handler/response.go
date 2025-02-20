@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"CoinTransfer/pkg/model"
+	"CoinTransfer/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -9,7 +9,7 @@ import (
 
 func newErrorResponse(c *gin.Context, statusCode int, message string) {
 	logrus.Error(message)
-	c.AbortWithStatusJSON(statusCode, model.Error{
+	c.AbortWithStatusJSON(statusCode, models.Error{
 		StatusCode: statusCode,
 		Message:    message,
 	})

@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"CoinTransfer/pkg/model"
+	"CoinTransfer/internal/models"
 
 	"github.com/jmoiron/sqlx"
 )
 
 type Authorization interface {
-	CreateUser(user model.User) error
-	GetUser(username, password string) (model.User, error)
+	CreateUser(user models.User) error
+	GetUser(username, password string) (models.User, error)
 }
 
 type Transfer interface {
@@ -19,15 +19,15 @@ type Transfer interface {
 }
 
 type Info interface {
-	GetInventory(UserId int) (model.InventoryItems, error)
-	TransferHistory(UserId int) (model.History, error)
-	getReceivedTransactions(UserId int) ([]model.ReceivedTransaction, error)
-	getSentTransactions(UserId int) ([]model.SentTransaction, error)
+	GetInventory(UserId int) (models.InventoryItems, error)
+	TransferHistory(UserId int) (models.History, error)
+	getReceivedTransactions(UserId int) ([]models.ReceivedTransaction, error)
+	getSentTransactions(UserId int) ([]models.SentTransaction, error)
 	GetCoins(userID int) (int, error)
 }
 
 type BuyItem interface {
-	GetItem(ItemName string) (model.Item, error)
+	GetItem(ItemName string) (models.Item, error)
 	GetBalance(userID int) (int, error)
 	AddToInventory(userID int, itemName string) error
 	UpdateBalance(senderID, amount int) error

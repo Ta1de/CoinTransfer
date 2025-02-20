@@ -1,8 +1,8 @@
-package service
+package services
 
 import (
-	"CoinTransfer/pkg/model"
-	"CoinTransfer/pkg/repository"
+	"CoinTransfer/internal/models"
+	"CoinTransfer/internal/repository"
 	"crypto/sha1"
 	"fmt"
 	"time"
@@ -29,7 +29,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user model.User) (string, error) {
+func (s *AuthService) CreateUser(user models.User) (string, error) {
 	user.Password = generatePasswordHash(user.Password)
 	err := s.repo.CreateUser(user)
 	if err != nil {

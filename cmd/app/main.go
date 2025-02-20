@@ -2,9 +2,9 @@ package main
 
 import (
 	cointransfer "CoinTransfer"
-	"CoinTransfer/pkg/handler"
-	"CoinTransfer/pkg/repository"
-	"CoinTransfer/pkg/service"
+	"CoinTransfer/internal/handler"
+	"CoinTransfer/internal/repository"
+	"CoinTransfer/internal/services"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -38,11 +38,11 @@ func main() {
 	}
 
 	repos := repository.NewRepositore(db)
-	services := service.NewService(repos)
+	services := services.NewService(repos)
 	handlers := handler.NewHandler(services)
 
 	srv := new(cointransfer.Server)
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes(&service.AuthService{})); err != nil {
+	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes(&services.AuthService{})); err != nil {
 		logrus.Fatalf("error occured while running server: %s", err.Error())
 	}
 }

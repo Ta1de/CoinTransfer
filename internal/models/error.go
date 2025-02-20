@@ -1,4 +1,4 @@
-package model
+package models
 
 type Error struct {
 	StatusCode int    `json:"status_code"`

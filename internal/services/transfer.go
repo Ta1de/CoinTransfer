@@ -1,7 +1,7 @@
-package service
+package services
 
 import (
-	"CoinTransfer/pkg/repository"
+	"CoinTransfer/internal/repository"
 	"fmt"
 )
 

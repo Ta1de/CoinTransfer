@@ -2,7 +2,7 @@
 package handler
 
 import (
-	"CoinTransfer/pkg/model"
+	"CoinTransfer/internal/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func (h *Handler) SendCoin(c *gin.Context) {
 		return
 	}
 
-	var input model.SendCoinRequest
+	var input models.SendCoinRequest
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

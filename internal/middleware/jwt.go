@@ -1,14 +1,14 @@
 package middleware
 
 import (
-	"CoinTransfer/pkg/service"
+	"CoinTransfer/internal/services"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func JWTAuthMiddleware(authService *service.AuthService) gin.HandlerFunc {
+func JWTAuthMiddleware(authService *services.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {

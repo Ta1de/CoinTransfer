@@ -1,8 +1,8 @@
-package service
+package services
 
 import (
-	"CoinTransfer/pkg/model"
-	"CoinTransfer/pkg/repository"
+	"CoinTransfer/internal/models"
+	"CoinTransfer/internal/repository"
 )
 
 type InfoService struct {
@@ -13,8 +13,8 @@ func NewInfoService(repo repository.Info) *InfoService {
 	return &InfoService{repo: repo}
 }
 
-func (s *InfoService) GetInfo(UserId int) (model.Info, error) {
-	var info model.Info
+func (s *InfoService) GetInfo(UserId int) (models.Info, error) {
+	var info models.Info
 
 	coins, err := s.repo.GetCoins(UserId)
 	if err != nil {

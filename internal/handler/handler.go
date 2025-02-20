@@ -1,22 +1,22 @@
 package handler
 
 import (
-	"CoinTransfer/pkg/middleware"
-	"CoinTransfer/pkg/service"
+	"CoinTransfer/internal/middleware"
+	"CoinTransfer/internal/services"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	services *service.Service
+	services *services.Service
 }
 
-func NewHandler(services *service.Service) *Handler {
+func NewHandler(services *services.Service) *Handler {
 	return &Handler{services: services}
 }
 
-func (h *Handler) InitRoutes(authService *service.AuthService) *gin.Engine {
+func (h *Handler) InitRoutes(authService *services.AuthService) *gin.Engine {
 	router := gin.New()
 
 	api := router.Group("/api")
