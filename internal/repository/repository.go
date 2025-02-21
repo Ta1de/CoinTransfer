@@ -21,8 +21,6 @@ type Transfer interface {
 type Info interface {
 	GetInventory(UserId int) (models.InventoryItems, error)
 	TransferHistory(UserId int) (models.History, error)
-	getReceivedTransactions(UserId int) ([]models.ReceivedTransaction, error)
-	getSentTransactions(UserId int) ([]models.SentTransaction, error)
 	GetCoins(userID int) (int, error)
 }
 

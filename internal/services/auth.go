@@ -5,16 +5,13 @@ import (
 	"CoinTransfer/internal/repository"
 	"crypto/sha1"
 	"fmt"
+	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 )
 
-const (
-	salt       = "jh32v4hj23v2v4h2vg332h4g3hv4"
-	singingKey = "efjn#JKf3%3#wegggegwe7we67W%3#23deg"
-	tokenTTL   = 12 * time.Hour
-)
+const tokenTTL = 12 * time.Hour
 
 type tokenClaims struct {
 	jwt.StandardClaims
@@ -30,11 +27,16 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 func (s *AuthService) CreateUser(user models.User) (string, error) {
-	user.Password = generatePasswordHash(user.Password)
+	user.Password = GeneratePasswordHash(user.Password)
 	err := s.repo.CreateUser(user)
 	if err != nil {
 		return "", err
 	}
+
+	// user, err = s.repo.GetUser(user.Username, user.Password)
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	token, err := s.CreateToken(user.Username, user.Password)
 	if err != nil {
@@ -57,7 +59,7 @@ func (s *AuthService) CreateToken(username, password string) (string, error) {
 		user.ID,
 	})
 
-	return token.SignedString([]byte(singingKey))
+	return token.SignedString([]byte(os.Getenv("singingKey")))
 }
 
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
@@ -65,7 +67,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(singingKey), nil
+		return []byte(os.Getenv("singingKey")), nil
 	})
 
 	if err != nil {
@@ -79,9 +81,9 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	return claims.UserId, nil
 }
 
-func generatePasswordHash(password string) string {
+func GeneratePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+	return fmt.Sprintf("%x", hash.Sum([]byte(os.Getenv("salt"))))
 }

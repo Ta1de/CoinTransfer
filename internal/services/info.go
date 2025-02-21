@@ -20,18 +20,18 @@ func (s *InfoService) GetInfo(UserId int) (models.Info, error) {
 	if err != nil {
 		return info, err
 	}
-	info.Coins = coins
 
 	items, err := s.repo.GetInventory(UserId)
 	if err != nil {
 		return info, err
 	}
-	info.Inventory = items
 
 	history, err := s.repo.TransferHistory(UserId)
 	if err != nil {
 		return info, err
 	}
+	info.Coins = coins
+	info.Inventory = items
 	info.CoinHistory = history
 
 	return info, nil
