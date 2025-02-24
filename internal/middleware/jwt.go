@@ -1,21 +1,21 @@
 package middleware
 
 import (
-	"CoinTransfer/internal/services"
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
-// const tokenTTL = 12 * time.Hour
+type TokenClaims struct {
+	jwt.StandardClaims
+	UserId int `json:"user_id"`
+}
 
-// type tokenClaims struct {
-// 	jwt.StandardClaims
-// 	UserId int `json:"user_id"`
-// }
-
-func JWTAuthMiddleware(authService services.Authorization) gin.HandlerFunc {
+func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -30,46 +30,32 @@ func JWTAuthMiddleware(authService services.Authorization) gin.HandlerFunc {
 		}
 
 		token := tokenParts[1]
-		userId, err := authService.ParseToken(token)
+		userId, err := ParseToken(token)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
 			return
 		}
 
 		c.Set("userId", userId)
-
 		c.Next()
 	}
 }
 
-// func CreateToken(userId int) (string, error) {
+func ParseToken(accessToken string) (int, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("singingKey")), nil
+	})
 
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-// 		jwt.StandardClaims{
-// 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
-// 			IssuedAt:  time.Now().Unix(),
-// 		},
-// 		userId,
-// 	})
+	if err != nil {
+		return 0, err
+	}
 
-// 	return token.SignedString([]byte(os.Getenv("singingKey")))
-// }
-
-// func ParseToken(accessToken string) (int, error) {
-// 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-// 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-// 		}
-// 		return []byte(os.Getenv("singingKey")), nil
-// 	})
-
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	claims, ok := token.Claims.(*tokenClaims)
-// 	if !ok || !token.Valid {
-// 		return 0, fmt.Errorf("invalid token")
-// 	}
-// 	return claims.UserId, nil
-// }
+	claims, ok := token.Claims.(*TokenClaims)
+	if !ok || !token.Valid {
+		return 0, fmt.Errorf("invalid token1")
+	}
+	return claims.UserId, nil
+}

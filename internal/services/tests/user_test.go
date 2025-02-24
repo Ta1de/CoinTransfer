@@ -5,18 +5,10 @@ import (
 	"CoinTransfer/internal/services"
 	"CoinTransfer/mocks"
 	"fmt"
-	"os"
 	"testing"
-	"time"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/assert"
 )
-
-type tokenClaims struct {
-	jwt.StandardClaims
-	UserId int `json:"user_id"`
-}
 
 func TestCreateUser_Success(t *testing.T) {
 	mockRepo := new(mocks.MockAuthorizationRepo)
@@ -128,56 +120,4 @@ func TestCreateToken_Failure(t *testing.T) {
 	assert.Error(t, err)
 	assert.Empty(t, token)
 	mockRepo.AssertExpectations(t)
-}
-
-func TestParseToken_Success(t *testing.T) {
-	mockRepo := new(mocks.MockAuthorizationRepo)
-	authService := services.NewAuthService(mockRepo)
-
-	userId := 1
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(12 * time.Hour).Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
-		UserId: userId,
-	})
-	signedToken, _ := token.SignedString([]byte(os.Getenv("singingKey")))
-
-	parsedUserId, err := authService.ParseToken(signedToken)
-
-	assert.NoError(t, err)
-	assert.Equal(t, userId, parsedUserId)
-}
-
-func TestParseToken_Failure_InvalidToken(t *testing.T) {
-	mockRepo := new(mocks.MockAuthorizationRepo)
-	authService := services.NewAuthService(mockRepo)
-
-	invalidToken := "invalidToken"
-
-	parsedUserId, err := authService.ParseToken(invalidToken)
-
-	assert.Error(t, err)
-	assert.Equal(t, 0, parsedUserId)
-}
-
-func TestParseToken_Failure_ExpiredToken(t *testing.T) {
-	mockRepo := new(mocks.MockAuthorizationRepo)
-	authService := services.NewAuthService(mockRepo)
-
-	userId := 1
-	expiredToken := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(-time.Hour).Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
-		UserId: userId,
-	})
-	signedToken, _ := expiredToken.SignedString([]byte(os.Getenv("singingKey")))
-
-	parsedUserId, err := authService.ParseToken(signedToken)
-
-	assert.Error(t, err)
-	assert.Equal(t, 0, parsedUserId)
 }

@@ -16,14 +16,14 @@ func NewHandler(services *services.Service) *Handler {
 	return &Handler{services: services}
 }
 
-func (h *Handler) InitRoutes(authService services.Authorization) *gin.Engine {
+func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
 	api := router.Group("/api")
 	{
 		api.POST("/auth", h.auth)
 
-		protected := api.Group("/", middleware.JWTAuthMiddleware(authService))
+		protected := api.Group("/", middleware.JWTAuthMiddleware())
 		{
 			protected.POST("/sendCoin", h.SendCoin)
 			protected.GET("/info", h.getInfo)

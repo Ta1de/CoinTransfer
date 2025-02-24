@@ -3,7 +3,7 @@ module CoinTransfer
 go 1.22.3
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jmoiron/sqlx v1.4.0
